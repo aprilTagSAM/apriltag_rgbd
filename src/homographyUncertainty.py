@@ -307,20 +307,24 @@ def covarianceEstimationHomography(h, wld_data, corners):
 
 ## main program ...
 
+## Camera parameters
 f_x = 529.2945040622658
 f_y = 531.2834529497384
 u0 = 466.96044871160075
 v0 = 273.2593671723483
 
+## Intrinsics Matrix
 A = np.array([  [f_x, 0.0, u0],
 		[0.0, f_y, v0], 
 		[0.0, 0.0, 1.0]])
 
+## Distortation Matrix
 D = np.array([[0.0676550948466241, -0.058556753440857666, 0.007350271107666055, -0.00817256648923586]])
 
 tag_size = 0.048
 tag_radius = tag_size/2
 
+## Tag Corners
 c1 = np.array([454.5, 331.5])
 c2 = np.array([485.5, 333.5])
 c3 = np.array([487.5, 305.5])
@@ -336,13 +340,14 @@ wld = np.array([M1, M2, M3, M4])
 
 print  ' *********************************************** '
 
-
+# Solve for tag homography
 retval, rvec, tvec = cv2.solvePnP(wld, corners, A, D, np.array([]), np.array([]), False, 0) 
 rot = cv2.Rodrigues(rvec)[0]
 
 print 'rvec: '
 print rvec
 
+# Pose rotation
 solvepnp_T = np.zeros((3,4)) 
 solvepnp_T[0,:] = np.array([ rot[0,0], rot[0,1], rot[0,2], tvec[0] ])
 solvepnp_T[1,:] = np.array([ rot[1,0], rot[1,1], rot[1,2], tvec[1] ])
@@ -352,7 +357,7 @@ solvepnp_T[2,:] = np.array([ rot[2,0], rot[2,1], rot[2,2], tvec[2] ])
 # print solvepnp_T
 
 ## solve pnp
-
+# Pose Translation
 solvepnp_m = np.zeros((3,3))
 solvepnp_m[:, 0] = solvepnp_T[:,0]
 solvepnp_m[:, 1] = solvepnp_T[:,1]
