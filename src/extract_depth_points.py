@@ -10,10 +10,12 @@ def main(args):
 	fy = 531.28
 	px = 466.96
 	py = 273.26
-	depth_image = cv2.imread("depth_frame.png", cv2.IMREAD_ANYDEPTH)
-	rgb_image = cv2.imread("rgb_frame.png")
+	depth_image = cv2.imread("../data/depth_frame.png", cv2.IMREAD_ANYDEPTH)
+	rgb_image = cv2.imread("../data/rgb_frame.png")
 	april_tag_rgb = rgb_image[175:195, 440:458]
 	april_tag_depth = depth_image[175:195, 440:458]
+	cv2.imshow('april_tag', april_tag_rgb)
+	cv2.waitKey(0)
 	all_pts = []
 	for i in range(175, 178):
 		for j in range(440, 448):
@@ -24,9 +26,11 @@ def main(args):
 				all_pts.append([x,y,depth])
 	sample_cov = 0.05
 	samples = np.array(all_pts)
-	print samples
 	cov = np.asarray([sample_cov] * samples.shape[0])
 	plane_est = bayesplane.fit_plane_bayes(samples, cov)
+
+	# Generate AprilTag homography poses from the image
+	# sample a few points from the apriltags and compare it to the plane
 	plane_est.plot(10)
 	
 if __name__ == '__main__':
